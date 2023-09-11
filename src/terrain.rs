@@ -1,7 +1,7 @@
 //! Types for configuring terrains.
 
 use crate::{
-    attachment_loader::{AttachmentFromDisk, AttachmentFromDiskLoader},
+    attachment_loader::{AttachmentFromDisk, AttachmentFromDiskLoader, AttachmentFromMemoryLoader, AttachmentFromMemory},
     preprocess::{BaseConfig, Preprocessor, TileConfig},
     terrain_data::{AtlasAttachment, AttachmentConfig, AttachmentIndex, NodeId},
 };
@@ -57,7 +57,7 @@ pub struct TerrainConfig {
     /// The amount of nodes the can be loaded simultaneously in the node atlas.
     pub node_atlas_size: u32,
     /// The path to the terrain folder inside the assets directory.
-    pub path: String,
+    pub path: String, //this is just for preprocess data - the compiled nodes 
     /// The attachments of the terrain.
     pub attachments: Vec<AtlasAttachment>,
     pub nodes: HashSet<NodeId>,
@@ -69,7 +69,7 @@ impl TerrainConfig {
         lod_count: u32,
         height: f32,
         node_atlas_size: u32,
-        path: String,
+        path: String,  //what is this exactly ? 
     ) -> Self {
         Self {
             lod_count,
@@ -77,7 +77,7 @@ impl TerrainConfig {
             leaf_node_size: 0,
             terrain_size,
             node_atlas_size,
-            path,
+              path,
             attachments: vec![],
             nodes: HashSet::new(),
         }
@@ -94,8 +94,11 @@ impl TerrainConfig {
     }
 
     /// Adds an attachment to the terrain, which will be loaded from disk automatically.
-    pub fn add_attachment_from_disk(
+   
+    
+     pub fn add_attachment_from_memory(
         &mut self,
+        
         preprocessor: &mut Preprocessor,
         loader: &mut AttachmentFromDiskLoader,
         attachment: AttachmentConfig,
@@ -115,22 +118,28 @@ impl TerrainConfig {
     ///
     /// This is required by terrains, that use the default render pipeline.
     pub fn add_base_attachment(&mut self, base: BaseConfig) {
+        
+        self.leaf_node_size = base.texture_size - 2 * base.border_size;
+                
         self.add_attachment(base.height_attachment());
         self.add_attachment(base.minmax_attachment());
     }
 
-    pub fn add_base_attachment_from_disk(
+    
+    
+     pub fn add_base_attachment_from_memory(
         &mut self,
+         
         preprocessor: &mut Preprocessor,
         loader: &mut AttachmentFromDiskLoader,
         base: BaseConfig,
         tile: TileConfig,
     ) {
-        self.leaf_node_size = base.texture_size - 2 * base.border_size;
+        //self.leaf_node_size = base.texture_size - 2 * base.border_size;
 
         loader.attachments.insert(
             self.attachments.len(),
-            AttachmentFromDisk::new(&base.height_attachment(), &self.path),
+            AttachmentFromDisk::new(&base.height_attachment(),&self.path)
         );
         loader.attachments.insert(
             self.attachments.len() + 1,
@@ -141,4 +150,5 @@ impl TerrainConfig {
 
         preprocessor.base = Some((tile, base));
     }
+    
 }

@@ -16,7 +16,7 @@ use crate::{
     TerrainConfig,
 };
 use bevy::prelude::*;
-use image::{ImageBuffer, Luma, LumaA, Rgb, Rgba};
+use image::{ImageBuffer, Luma, LumaA, Rgb, Rgba, DynamicImage};
 use itertools::{Itertools, Product};
 use std::ops::Range;
 
@@ -80,8 +80,10 @@ impl BaseConfig {
 /// The configuration of the source tile(s) of an attachment.
 #[derive(Default, Debug)]
 pub struct TileConfig {
+    
+    pub image: DynamicImage,
     /// The path to the tile/directory of tiles.
-    pub path: String,
+    //pub path: String,
     /// The size of the tile in pixels.
     pub size: u32,
     /// The file format of the tile.

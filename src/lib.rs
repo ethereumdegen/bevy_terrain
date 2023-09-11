@@ -46,7 +46,7 @@
 extern crate core;
 
 use crate::{
-    attachment_loader::{finish_loading_attachment_from_disk, start_loading_attachment_from_disk},
+    //attachment_loader::{finish_loading_attachment, start_loading_attachment },
     debug::DebugTerrain,
     formats::TDFPlugin,
     render::{
@@ -75,6 +75,7 @@ use crate::{
     },
     terrain_view::{TerrainView, TerrainViewComponents, TerrainViewConfig},
 };
+use attachment_loader::{finish_loading_attachments,start_loading_attachments_from_disk,start_loading_attachments_from_memory};
 use bevy::{
     prelude::*,
     render::{
@@ -84,14 +85,19 @@ use bevy::{
     },
 };
 
+use crate::collider::create_collider;
+
 pub mod attachment_loader;
 pub mod debug;
+pub mod collider;
 pub mod formats;
 pub mod preprocess;
 pub mod render;
 pub mod terrain;
 pub mod terrain_data;
 pub mod terrain_view;
+
+
 
 pub mod prelude {
     //! `use bevy_terrain::prelude::*;` to import common components, bundles, and plugins.
@@ -166,12 +172,14 @@ impl Plugin for TerrainPlugin {
             .init_resource::<TerrainViewComponents<TerrainViewConfig>>()
             .add_systems(
                 (
-                    finish_loading_attachment_from_disk.before(update_node_atlas),
+                    finish_loading_attachments .before(update_node_atlas),
                     compute_quadtree_request.before(update_node_atlas),
                     update_node_atlas,
                     adjust_quadtree.after(update_node_atlas),
-                    start_loading_attachment_from_disk.after(update_node_atlas),
+                    start_loading_attachments_from_disk.after(update_node_atlas),
+                    start_loading_attachments_from_memory.after(update_node_atlas),
                     update_height_under_viewer.after(adjust_quadtree),
+                    create_collider
                 )
                     .in_base_set(CoreSet::Last),
             );

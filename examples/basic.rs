@@ -45,13 +45,16 @@ fn setup(
         NODE_ATLAS_SIZE,
         PATH.to_string(),
     );
+    
+    let source_path = "assets/terrain/source/height".to_string();
 
     config.add_base_attachment_from_disk(
         &mut preprocessor,
         &mut loader,
+        source_path,
         BaseConfig::new(TEXTURE_SIZE, MIP_LEVEL_COUNT),
         TileConfig {
-            path: "assets/terrain/source/height".to_string(),
+           // path: "assets/terrain/source/height".to_string(),
             size: TERRAIN_SIZE,
             file_format: FileFormat::PNG,
         },

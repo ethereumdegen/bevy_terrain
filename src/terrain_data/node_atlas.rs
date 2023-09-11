@@ -106,6 +106,9 @@ pub struct NodeAtlas {
     /// Stores the states of all present nodes.
     pub(crate) nodes: HashMap<NodeId, AtlasNode>,
     pub(crate) existing_nodes: HashSet<NodeId>,
+    
+    pub(crate) colliders: HashMap<NodeId, Entity>,
+    
     /// Lists the unused nodes in least recently used order.
     unused_nodes: VecDeque<UnusedNode>,
 }
@@ -137,6 +140,7 @@ impl NodeAtlas {
             size,
             unused_nodes,
             existing_nodes,
+            colliders:  default(),
         }
     }
 

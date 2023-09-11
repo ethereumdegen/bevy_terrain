@@ -168,6 +168,8 @@ struct LoadingTexture {
     handle: Handle<Image>,
 }
 
+
+//this seems to poll for the image being loaded and executes once when it finds it in the proper state.  
 fn create_array_texture(
     asset_server: Res<AssetServer>,
     mut loading_texture: ResMut<LoadingTexture>,

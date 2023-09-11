@@ -5,7 +5,7 @@ use crate::{
             format_directory, format_node_path, iterate_directory, load_image, reset_directory,
             save_image,
         },
-        split::split_tiles,
+       
         stitch::stitch_layer,
         BaseConfig, TileConfig, UVec2Utils,
     },
@@ -13,6 +13,8 @@ use crate::{
     TerrainConfig,
 };
 use image::{DynamicImage, ImageBuffer, LumaA};
+
+use super::split::split_tiles_from_memory;
 
 fn height_to_minmax(
     height_directory: &str,
@@ -56,7 +58,7 @@ pub(crate) fn preprocess_base(config: &TerrainConfig, tile: &TileConfig, base: &
     reset_directory(&height_directory);
     reset_directory(&minmax_directory);
 
-    let temp = split_tiles(&height_directory, tile, &height_attachment);
+    let temp = split_tiles_from_memory(&height_directory, tile, &height_attachment);
 
     let (mut first, mut last) = temp;
 
@@ -109,7 +111,7 @@ pub(crate) fn preprocess_attachment(
 
     reset_directory(&directory);
 
-    let (mut first, mut last) = split_tiles(&directory, tile, attachment);
+    let (mut first, mut last) = split_tiles_from_memory(&directory, tile, attachment);
 
     for lod in 1..config.lod_count {
         first = first.div_floor(2);

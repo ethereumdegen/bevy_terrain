@@ -52,9 +52,12 @@ fn tile_to_node(
     };
 }
 
-fn split_tile(directory: &str, tile: &TileConfig, attachment: &AttachmentConfig, offset: UVec2) {
-    let tile_image = load_image(&tile.path, tile.file_format).expect("Could not load tile.");
+ 
+fn split_tile_to_disk(directory: &str, tile: &TileConfig, attachment: &AttachmentConfig, offset: UVec2) {
+    //let tile_image = load_image(&tile.path, tile.file_format).expect("Could not load tile.");
 
+    let tile_image = &tile.image;
+    
     // first and last node coordinate
     let first = offset.div_floor(attachment.center_size);
     let last = (offset + tile.size + attachment.border_size).div_ceil(attachment.center_size);
@@ -76,6 +79,46 @@ fn split_tile(directory: &str, tile: &TileConfig, attachment: &AttachmentConfig,
     }
 }
 
+/*
+
+
+fn split_tile_to_memory(
+  //  directory: &str,
+     tile: &TileConfig,
+     attachment: &AttachmentConfig, 
+     offset: UVec2) {
+    
+    let tile_image = load_image(&tile.path, tile.file_format).expect("Could not load tile.");
+
+    // first and last node coordinate
+    let first = offset.div_floor(attachment.center_size);
+    let last = (offset + tile.size + attachment.border_size).div_ceil(attachment.center_size);
+
+    for (x, y) in first.product(last) {
+        let node_path = format_node_path(directory, 0, x, y);
+
+        let mut node_image = load_or_create_node(&node_path, attachment);
+
+        tile_to_node(
+            &mut node_image,
+            &tile_image,
+            attachment,
+            UVec2::new(x, y),
+            offset,
+        );
+
+        //change me !!! nodes should reside in mem
+        save_image(&node_path, &node_image, attachment);
+    }
+}
+*/
+
+/*
+This takes the source tiles and splits them into the compiled tile fragments 
+
+I need to upgrade this so it operates on memory instead of on a path ..
+*/
+/*
 pub(crate) fn split_tiles(
     directory: &str,
     tile: &TileConfig,
@@ -114,6 +157,59 @@ pub(crate) fn split_tiles(
 
         (UVec2::splat(0), UVec2::splat(tile.size))
     };
+
+    let first = offset.div_floor(attachment.center_size);
+    let last = (offset + size).div_ceil(attachment.center_size);
+
+    (first, last)
+}
+*/
+
+/*
+Change this so the fragments get stored in MEMORY and not on disk. Also should LOAD from memory as tileConfig should not use a path..  
+*/
+
+pub(crate) fn split_tiles_from_memory(
+    directory: &str,
+    tile: &TileConfig,
+    attachment: &AttachmentConfig,
+) -> (UVec2, UVec2) {
+    
+    //waht was the point of this ?
+    
+    /*let (offset, size) = if fs::metadata(&tile.path).unwrap().is_dir() {
+        let mut min_pos = UVec2::splat(u32::MAX);
+        let mut max_pos = UVec2::splat(u32::MIN);
+
+        for (tile_name, tile_path) in iterate_directory(&tile.path) {
+            let mut parts = tile_name.split('_');
+            parts.next();
+
+            let coord = UVec2::new(
+                parts.next().unwrap().parse::<u32>().unwrap(),
+                parts.next().unwrap().parse::<u32>().unwrap(),
+            );
+
+            let tile = TileConfig {
+                path: tile_path,
+                ..*tile
+            };
+
+            split_tile_to_disk( directory, &tile, attachment, coord * tile.size);
+
+            min_pos = min_pos.min(coord);
+            max_pos = max_pos.max(coord);
+        }
+
+        let offset = min_pos * tile.size;
+        let size = (1 + max_pos - min_pos) * tile.size;
+
+        (offset, size)
+    } else {*/
+        split_tile_to_disk( directory, tile, attachment, UVec2::splat(0));
+
+      let (offset, size) =  (UVec2::splat(0), UVec2::splat(tile.size)) ;
+   // };
 
     let first = offset.div_floor(attachment.center_size);
     let last = (offset + size).div_ceil(attachment.center_size);
