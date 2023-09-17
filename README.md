@@ -72,6 +72,11 @@ Use them to fly over the terrain, experiment with the quality settings and enter
 | 0.1.0          | 0.9    |
 --->
  
+ 
+## Running Examples 
+ 
+ cargo run --example [basic,advanced]
+ 
 
 ## License
 Bevy Terrain is dual-licensed under either
@@ -80,3 +85,10 @@ Bevy Terrain is dual-licensed under either
 * Apache License, Version 2.0 (LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0)
 
 at your option.
+
+
+
+
+## Dev Todo 
+
+- Reenable the refine tiles shader

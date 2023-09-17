@@ -214,6 +214,8 @@ impl render_graph::Node for TerrainComputeNode {
         self.view_query.update_archetypes(world);
     }
 
+    
+        //consider making this NOT based on world so it can run in parallel 
     fn run(
         &self,
         _graph: &mut render_graph::RenderGraphContext,
@@ -236,10 +238,11 @@ impl render_graph::Node for TerrainComputeNode {
             }
         }
 
+        //this is failing !! the pipellines are not ready 
         let pipelines = &match TerrainComputePipelineId::iter()
             .map(|key| {
                 pipeline_cache
-                    .get_compute_pipeline(compute_pipelines.pipelines[key as usize].unwrap())
+                    .get_compute_pipeline(compute_pipelines.pipelines[key as usize].unwrap() )
             })
             .collect::<Option<Vec<_>>>()
         {
@@ -250,6 +253,9 @@ impl render_graph::Node for TerrainComputeNode {
         let pass = &mut context
             .command_encoder()
             .begin_compute_pass(&ComputePassDescriptor::default());
+
+
+        //consider removing these unwraps !! 
 
         for terrain in self.terrain_query.iter_manual(world) {
             let terrain_data = terrain_data.get(&terrain).unwrap();

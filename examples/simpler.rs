@@ -30,7 +30,7 @@ pub struct TerrainMaterial {
 
 impl Material for TerrainMaterial {
     fn fragment_shader() -> ShaderRef {
-        "shaders/advanced.wgsl".into()
+        "shaders/simpler.wgsl".into()
     }
 }
 
@@ -82,7 +82,7 @@ fn setup(
         &mut loader,
         BaseConfig::new(TEXTURE_SIZE, MIP_LEVEL_COUNT),
         TileConfig {
-            path: "assets/terrain/source/height".to_string(),
+            path: "assets/terrain/source/height.png".to_string(),
             size: TERRAIN_SIZE,
             file_format: FileFormat::PNG,
         },
@@ -160,6 +160,8 @@ fn setup(
         brightness: 0.2,
         ..default()
     });
+    
+    println!("finished setup ! ");
 }
 
 fn toggle_camera(input: Res<Input<KeyCode>>, mut camera_query: Query<&mut DebugCamera>) {
@@ -175,16 +177,26 @@ struct LoadingTexture {
     handle: Handle<Image>,
 }
 
+ 
+
+
+//somehow move this deeper into the code 
 fn create_array_texture(
     asset_server: Res<AssetServer>,
     mut loading_texture: ResMut<LoadingTexture>,
     mut images: ResMut<Assets<Image>>,
 ) {
-    if loading_texture.is_loaded
-        || asset_server.get_load_state(loading_texture.handle.clone()) != LoadState::Loaded
+    if   asset_server.get_load_state(loading_texture.handle.clone()) != LoadState::Loaded
     {
+        println!("Warn: tex not loaded");
         return;
     }
+        
+         if loading_texture.is_loaded {
+             return 
+         }
+        
+       println!("Info: array texture was loaded!");
 
     loading_texture.is_loaded = true;
     let image = images.get_mut(&loading_texture.handle).unwrap();
